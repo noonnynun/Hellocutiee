@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hello.cutieee</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fafaf8;
+    --surface: #ffffff;
+    --border: #e8e6e1;
+    --text: #1a1a18;
+    --muted: #8a887f;
+    --accent: #c8a97e;
+    --accent-soft: #f5efe6;
+    --tag-bg: #f0ede8;
+    --danger: #c0392b;
+    --success: #2d7a4f;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── SHARED HEADER ── */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .logo span { color: var(--accent); }
+  .search-wrap {
+    flex: 1;
+    max-width: 520px;
+    position: relative;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .admin-toggle {
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .admin-toggle:hover { background: var(--tag-bg); color: var(--text); }
+  .count-badge {
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--tag-bg);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── CATEGORY TABS ── */
+  .category-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .category-bar::-webkit-scrollbar { display: none; }
+  .category-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 2px;
+    padding-bottom: 0;
+  }
+  .cat-btn {
+    padding: 12px 18px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s;
+    font-weight: 400;
+  }
+  .cat-btn:hover { color: var(--text); }
+  .cat-btn.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── SIZE FILTER ── */
+  .filter-bar {
+    max-width: 1200px;
+    margin: 20px auto 0;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .filter-label { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+  .size-btn {
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    font-weight: 500;
+  }
+  .size-btn:hover { border-color: var(--accent); color: var(--text); }
+  .size-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .clear-btn {
+    font-size: 12px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 8px;
+    font-family: 'Inter', sans-serif;
+    text-decoration: underline;
+    display: none;
+  }
+  .clear-btn.visible { display: block; }
+
+  /* ── PRODUCT GRID ── */
+  .shop-view { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  .results-info { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .product-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.18s, box-shadow 0.18s;
+    cursor: pointer;
+  }
+  .product-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .card-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .card-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--accent);
+  }
+  .card-img-placeholder svg { opacity: 0.5; }
+  .card-img-placeholder span { font-size: 11px; color: var(--muted); }
+  .card-size-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.92);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: var(--text);
+  }
+  .card-body { padding: 14px 14px 16px; }
+  .card-cat { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 600; margin-bottom: 5px; }
+  .card-name { font-size: 13px; color: var(--text); line-height: 1.4; margin-bottom: 8px; font-weight: 400; }
+  .card-meta { display: flex; justify-content: space-between; align-items: center; }
+  .card-dims { font-size: 11px; color: var(--muted); }
+  .card-price {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .card-price.no-price { font-size: 12px; color: var(--muted); font-weight: 400; }
+  .card-id { font-size: 10px; color: var(--border); margin-top: 4px; }
+
+  .no-results {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+  .no-results p { margin-top: 8px; font-size: 13px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    backdrop-filter: blur(2px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: 14px;
+    max-width: 520px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .modal-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .modal-img img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-img-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+  }
+  .modal-img-placeholder a {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    padding: 8px 20px;
+    border-radius: 6px;
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+  }
+  .modal-body { padding: 24px; }
+  .modal-cat { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .modal-name { font-size: 20px; font-family: 'Playfair Display', serif; color: var(--text); margin-bottom: 14px; line-height: 1.3; }
+  .modal-specs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .spec-item { background: var(--bg); border-radius: 8px; padding: 12px; text-align: center; }
+  .spec-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px; }
+  .spec-val { font-size: 16px; font-weight: 600; color: var(--text); }
+  .modal-price-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 16px; }
+  .modal-price { font-size: 24px; font-weight: 600; color: var(--text); }
+  .modal-price.no-price { font-size: 14px; color: var(--muted); font-weight: 400; }
+  .modal-link { font-size: 13px; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .modal-code { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+  /* ── ADMIN PANEL ── */
+  #admin-panel {
+    display: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+  #admin-panel.open { display: block; }
+  .admin-title { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 6px; }
+  .admin-subtitle { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+
+  /* stats bar */
+  .admin-stats { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; min-width: 130px; }
+  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px; }
+  .stat-val { font-size: 24px; font-weight: 700; color: var(--text); }
+
+  /* add button row */
+  .admin-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .admin-topbar-left { display: flex; align-items: center; gap: 12px; }
+
+  /* table */
+  .admin-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .admin-table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .admin-table-title { font-size: 15px; font-weight: 600; }
+  .admin-search { padding: 8px 14px; border: 1px solid var(--border); border-radius: 7px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; width: 240px; }
+  .admin-search:focus { border-color: var(--accent); }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 700px; }
+  th { text-align: left; padding: 11px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; background: var(--bg); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 13px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr.sold-row td { opacity: 0.45; text-decoration: line-through; }
+  tr.sold-row .td-actions { text-decoration: none; }
+  tr.sold-row td .td-actions * { text-decoration: none; opacity: 1; }
+  tr:hover td { background: var(--bg); }
+  .td-name { max-width: 220px; line-height: 1.35; }
+  .td-code { font-size: 11px; color: var(--muted); font-family: monospace; }
+  .td-price { font-weight: 600; color: var(--text); }
+  .td-price.no-price { font-weight: 400; color: var(--muted); font-size: 12px; }
+  .td-actions { display: flex; gap: 5px; flex-wrap: nowrap; }
+
+  .btn-primary {
+    padding: 10px 22px;
+    background: var(--text);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { opacity: 0.82; }
+  .btn-secondary {
+    padding: 10px 18px;
+    background: none;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-secondary:hover { background: var(--tag-bg); color: var(--text); }
+  .btn-sm {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: all 0.18s;
+  }
+  .btn-sm:hover { background: var(--tag-bg); color: var(--text); }
+  .btn-sm.danger { color: var(--danger); border-color: #fcc; }
+  .btn-sm.danger:hover { background: #fff5f5; }
+  .btn-sm.sold { color: #b45309; border-color: #fcd34d; }
+  .btn-sm.sold:hover { background: #fffbeb; }
+  .btn-sm.unsold { color: var(--success); border-color: #a7f3d0; }
+  .btn-sm.unsold:hover { background: #f0fdf4; }
+
+  /* DRAWER */
+  .drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    backdrop-filter: blur(2px);
+  }
+  .drawer-overlay.open { display: block; }
+  .drawer {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 420px;
+    max-width: 100vw;
+    background: var(--surface);
+    box-shadow: -8px 0 40px rgba(0,0,0,0.12);
+    z-index: 201;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+  }
+  .drawer-overlay.open .drawer { transform: translateX(0); }
+  .drawer-head {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .drawer-head h2 { font-size: 17px; font-weight: 600; }
+  .drawer-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--muted);
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .drawer-close:hover { background: var(--tag-bg); color: var(--text); }
+  .drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .drawer-foot {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .form-group input, .form-group select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); background: #fff; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-hint { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* price highlight */
+  .price-field input { font-size: 18px; font-weight: 700; border-color: var(--accent); background: var(--accent-soft); }
+
+  /* sold badge */
+  .badge-sold { display: inline-block; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+
+  .admin-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 13px;
+    z-index: 400;
+    transition: transform 0.3s;
+    pointer-events: none;
+  }
+  .admin-toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── ADMIN LOGIN ── */
+  .login-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,24,0.55);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+  }
+  .login-overlay.open { display: flex; }
+  .login-box {
+    background: var(--surface);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 340px;
+    padding: 28px 26px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .login-box h2 { font-family: 'Playfair Display', serif; font-size: 19px; margin-bottom: 4px; }
+  .login-box p { font-size: 12.5px; color: var(--muted); margin-bottom: 18px; }
+  .login-box input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+  .login-box input:focus { border-color: var(--accent); }
+  .login-error { font-size: 12px; color: var(--danger); min-height: 16px; margin-bottom: 8px; }
+  .login-actions { display: flex; gap: 8px; }
+
+  /* ── SHOP VIEW ── */
+  #shop-view { display: block; }
+  #shop-view.hidden { display: none; }
+
+  @media (max-width: 600px) {
+    .header-inner { height: auto; padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+    .search-wrap { order: 2; max-width: 100%; width: 100%; }
+    .header-actions { order: 3; }
+    .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .shop-view { padding: 16px; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">Hello<span>.</span>cutieee</div>
+    <div class="search-wrap" id="search-wrap-shop">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" class="search-input" id="search-input" placeholder="ค้นหาเสื้อ เช่น มิกกี้, คิตตี้, สีชมพู..." oninput="filterProducts()">
+    </div>
+    <div class="header-actions">
+      <span class="count-badge" id="result-count">-- ชิ้น</span>
+      <button class="admin-toggle" onclick="toggleAdmin()">⚙ Admin</button>
+    </div>
+  </div>
+</header>
+
+<!-- CATEGORY BAR -->
+<nav class="category-bar" id="cat-bar">
+  <div class="category-inner" id="cat-inner"></div>
+</nav>
+
+<!-- SIZE FILTER -->
+<div class="filter-bar" id="filter-bar">
+  <span class="filter-label">ไซซ์</span>
+  <div id="size-filters"></div>
+  <button class="clear-btn" id="clear-size" onclick="clearSize()">ล้างตัวกรอง</button>
+</div>
+
+<!-- SHOP VIEW -->
+<div id="shop-view">
+  <div class="shop-view">
+    <div class="product-grid" id="product-grid"></div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <h1 class="admin-title">จัดการสินค้า</h1>
+  <p class="admin-subtitle">Hello.cutieee — เพิ่ม แก้ไข ตั้งราคา และลบสินค้าได้ที่นี่</p>
+
+  <div class="admin-stats">
+    <div class="stat-card"><div class="stat-label">สินค้าทั้งหมด</div><div class="stat-val" id="stat-total">0</div></div>
+    <div class="stat-card"><div class="stat-label">มีราคาแล้ว</div><div class="stat-val" id="stat-priced">0</div></div>
+    <div class="stat-card"><div class="stat-label">ยังไม่ใส่ราคา</div><div class="stat-val" id="stat-no-price">0</div></div>
+    <div class="stat-card"><div class="stat-label">ขายแล้ว</div><div class="stat-val" id="stat-sold">0</div></div>
+    <div class="stat-card"><div class="stat-label">พื้นที่เก็บข้อมูล</div><div class="stat-val" id="stat-storage" style="font-size:18px">0 MB</div></div>
+  </div>
+
+  <div class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="btn-primary" onclick="openDrawer(null)">+ เพิ่มสินค้าใหม่</button>
+      <button class="btn-secondary" onclick="exportData()">⬇ สำรองข้อมูล (.json)</button>
+    </div>
+    <input type="text" class="admin-search" placeholder="🔍  ค้นหาชื่อ, รหัส, หมวด..." oninput="renderAdminTable(this.value)" id="admin-search-box">
+  </div>
+
+  <div class="admin-table-wrap">
+    <div class="admin-table-header">
+      <span class="admin-table-title">รายการสินค้า — <span id="admin-count">0</span> ชิ้น</span>
+      <span style="font-size:12px;color:var(--muted)">กด <b>แก้ไข</b> เพื่อแก้ราคา รูป ข้อมูล · กด <b>ขายแล้ว</b> เพื่อซ่อนจากหน้าร้าน</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ชื่อสินค้า</th>
+            <th>หมวด</th>
+            <th>ไซซ์</th>
+            <th>อก</th>
+            <th>ยาว</th>
+            <th>ราคา</th>
+            <th>รหัส</th>
+            <th>สถานะ</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer(event)">
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <h2 id="drawer-title">เพิ่มสินค้าใหม่</h2>
+      <button class="drawer-close" onclick="closeDrawerDirect()">×</button>
+    </div>
+    <div class="drawer-body">
+      <input type="hidden" id="edit-id">
+      <div class="form-group price-field">
+        <label>💰 ราคา (บาท)</label>
+        <input type="number" id="f-price" placeholder="ใส่ราคา เช่น 250">
+        <div class="form-hint">ถ้ายังไม่รู้ราคา ทิ้งว่างไว้ได้ — จะแสดง "สอบถามราคา"</div>
+      </div>
+      <div class="form-group">
+        <label>ชื่อสินค้า</label>
+        <input type="text" id="f-name" placeholder="เช่น เสื้อ มิกกี้เมาส์ สีขาว งานป้าย">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>หมวดหมู่</label>
+          <select id="f-cat">
+            <option value="มิกกี้และเพื่อนๆ">มิกกี้และเพื่อนๆ</option>
+            <option value="ซานริโอ/แครแบร">ซานริโอ/แครแบร์</option>
+            <option value="สัตวในดิสนีย">สัตว์ดิสนีย์</option>
+            <option value="เจาหญิง">เจ้าหญิง</option>
+            <option value="สตอเบอรรี่">สตรอเบอร์รี่</option>
+            <option value="ไนทแมร/ผีนอย/เจาสาว">ไนท์แมร์/ผีน้อย</option>
+            <option value="อื่นๆ">อื่นๆ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ไซซ์</label>
+          <select id="f-size">
+            <option value="S">S</option>
+            <option value="M" selected>M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="2XL">2XL</option>
+            <option value="3XL">3XL</option>
+            <option value="4XL">4XL</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>อก (นิ้ว)</label>
+          <input type="number" id="f-chest" step="0.5" placeholder="20">
+        </div>
+        <div class="form-group">
+          <label>ยาว (นิ้ว)</label>
+          <input type="number" id="f-length" step="0.5" placeholder="27">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>รหัสสินค้า</label>
+        <input type="text" id="f-code" placeholder="เช่น ม094">
+      </div>
+      <div class="form-group">
+        <label>ลิงก์รูปภาพ (ถ้ามี)</label>
+        <input type="text" id="f-img" placeholder="https://instagram.com/p/... หรือ URL รูปโดยตรง">
+        <div class="form-hint">วาง URL จาก Instagram หรือ URL รูปภาพ .jpg/.png — หรืออัปโหลดรูปจากเครื่องด้านล่างแทนได้</div>
+      </div>
+      <div class="form-group">
+        <label>อัปโหลดรูปจากเครื่อง</label>
+        <input type="file" id="f-img-file" accept="image/*" onchange="handleImageUpload(event)">
+        <div class="form-hint">รูปจะถูกย่อขนาดให้เบาลงอัตโนมัติก่อนบันทึก (เก็บไว้ในตัวเครื่อง/เบราว์เซอร์นี้)</div>
+        <div id="img-preview-wrap" style="display:none;margin-top:6px">
+          <img id="img-preview" style="width:100%;max-height:160px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:block">
+          <button type="button" class="btn-sm danger" style="margin-top:6px" onclick="clearUploadedImage()">ลบรูปนี้</button>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn-primary" onclick="saveProduct()" style="flex:1">บันทึก</button>
+      <button class="btn-secondary" onclick="closeDrawerDirect()">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-img" id="modal-img">
+      <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">×</button>
+      <div class="modal-img-placeholder" id="modal-placeholder">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-4 4 4"/><circle cx="8" cy="14" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+        <span>ยังไม่มีรูปภาพ</span>
+        <a id="modal-ig-link" href="#" target="_blank" style="display:none">ดูรูปใน Instagram ↗</a>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-cat" id="modal-cat"></div>
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-specs">
+        <div class="spec-item"><div class="spec-label">ไซซ์</div><div class="spec-val" id="m-size">—</div></div>
+        <div class="spec-item"><div class="spec-label">อก</div><div class="spec-val" id="m-chest">—</div></div>
+        <div class="spec-item"><div class="spec-label">ยาว</div><div class="spec-val" id="m-length">—</div></div>
+      </div>
+      <div class="modal-price-row">
+        <div>
+          <div class="modal-price" id="m-price"></div>
+          <div class="modal-code" id="m-code"></div>
+        </div>
+        <a id="m-link" class="modal-link" href="#" target="_blank" style="display:none">ดูรูป ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN OVERLAY -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <h2>เข้าสู่ระบบแอดมิน</h2>
+    <p>ใส่รหัสผ่านเพื่อจัดการสินค้า (เฉพาะแอดมินเท่านั้น)</p>
+    <input type="password" id="login-pass" placeholder="รหัสผ่าน" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-error" id="login-error"></div>
+    <div class="login-actions">
+      <button class="btn-primary" style="flex:1" onclick="doLogin()">เข้าสู่ระบบ</button>
+      <button class="btn-secondary" onclick="document.getElementById('login-overlay').classList.remove('open')">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-toast" id="toast"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────
+const RAW_PRODUCTS = [
+  {id:1,cat:"สตอเบอรรี่",name:"เสื้อ สตอเบอร์รี่ช็อตเคก สีชมพู",size:"M",chest:19,length:27,code:"ฟ022",img:""},
+  {id:3,cat:"ซานริโอ/แครแบร",name:"เสื้อ หมีแครแบร สีขาว",size:"M",chest:20,length:28,code:"พ031",img:""},
+  {id:5,cat:"ซานริโอ/แครแบร",name:"เสื้อ สเวตเตอร์คุโรมิ สีดำ มีฮูด",size:"XL",chest:24.5,length:27,code:"ว005",img:""},
+  {id:9,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ เป็ดเดซี่ สกรีนจม งานป้ายโตเกียวดิสนีย์ สีขาว",size:"L",chest:21,length:25,code:"ร041",img:""},
+  {id:10,cat:"สัตวในดิสนีย",name:"เสื้อ แมวมาลี อลิสโตแคท สีขาว ลายหลัง",size:"L",chest:22,length:25.5,code:"ว050",img:""},
+  {id:11,cat:"ซานริโอ/แครแบร",name:"เสื้อซานริโอ คิตตี้สายรุ้ง เสื้อดำ",size:"M",chest:19.5,length:29,code:"น066",img:""},
+  {id:12,cat:"สัตวในดิสนีย",name:"เสื้อยืดแขนยาวลายกวางแบมบิ สีดำ",size:"L",chest:21,length:27,code:"ย047",img:""},
+  {id:15,cat:"ซานริโอ/แครแบร",name:"เสื้อซานริโอรวม สีชมพู คิตตี้ คุโรมิ มายเม ชินนามอน",size:"M",chest:19,length:24.5,code:"ม132",img:""},
+  {id:17,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ เป็ดเดซี่ บิ๊กเฟส ป้ายโตเกียวดิสนีย์ สีม่วง",size:"M",chest:20,length:26,code:"ป047",img:""},
+  {id:19,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อสเวตเตอร์ฮูด มีซิป ลายมิกกี้เมาส์",size:"M",chest:20,length:24,code:"ว010",img:""},
+  {id:21,cat:"สตอเบอรรี่",name:"เสื้อ สตอเบอร์รี่ช็อตเคก สีชมพูอ่อน สกรีนจม",size:"XL",chest:21,length:28,code:"ร017",img:""},
+  {id:24,cat:"สัตวในดิสนีย",name:"หมา 101 สีขาว สกรีนจม",size:"L",chest:21,length:28,code:"ร073",img:""},
+  {id:25,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์ 50ปี รวมมิกกี้และเพื่อน",size:"M",chest:20.5,length:27,code:"ล057",img:""},
+  {id:26,cat:"ซานริโอ/แครแบร",name:"เสื้อ แครแบร์สีชมพู",size:"XL",chest:24,length:27.6,code:"ล047",img:""},
+  {id:29,cat:"สัตวในดิสนีย",name:"เสื้อ อลาดิน ลิงอาบู งานป้าย",size:"M",chest:20,length:27,code:"น079",img:""},
+  {id:30,cat:"ซานริโอ/แครแบร",name:"เสื้อ ซานริโอ มายเมโลดี้ สีม่วง",size:"L",chest:21,length:28.5,code:"น010",img:""},
+  {id:31,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์ป้าย 2014 สีกรม",size:"M",chest:20,length:27,code:"ด051",img:""},
+  {id:34,cat:"ซานริโอ/แครแบร",name:"เสื้อซานริโอ ชินนามอนโรล งานปก",size:"M",chest:20,length:27,code:"ข065",img:""},
+  {id:36,cat:"สัตวในดิสนีย",name:"เสื้อ ช้างดัมโบ สีเทา งานป้าย",size:"M",chest:20,length:28,code:"จ015",img:""},
+  {id:37,cat:"ซานริโอ/แครแบร",name:"เสื้อ คิตตี้สีเขียว ซานริโอ",size:"M",chest:20,length:27,code:"น080",img:""},
+  {id:41,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มินนี่เมาส์ ลายทะลุ สีชมพู",size:"L",chest:21,length:28,code:"ด057",img:""},
+  {id:42,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์สีเทา งานป้ายดิสนีย์",size:"M",chest:19,length:28,code:"ม094",img:""},
+  {id:43,cat:"สัตวในดิสนีย",name:"เสื้อ หมา 101 สกรีนจม สีขาว",size:"L",chest:21,length:25,code:"จ019",img:""},
+  {id:44,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ เป็ดเดซี่ สีขาวครีม งานป้ายดิสนีย์",size:"L",chest:22,length:27,code:"ล060",img:""},
+  {id:46,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงอลิส สีขาว",size:"M",chest:19,length:27.5,code:"ว064",img:""},
+  {id:48,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงมู่หลาน สีดำ",size:"M",chest:20.5,length:28,code:"ส012",img:""},
+  {id:54,cat:"สัตวในดิสนีย",name:"เสื้อ กวางแบมบิ สีเขียว",size:"M",chest:20.5,length:27,code:"พ057",img:""},
+  {id:64,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงอลิส สีขาว ยูนิโค สกรีนจม",size:"L",chest:22,length:25,code:"น019",img:""},
+  {id:66,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์ งานป้าย สีขาวกรมทูโทน",size:"M",chest:19,length:25,code:"ม125",img:""},
+  {id:73,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อขาว เป็ดโดนัลด์ดั๊ก ป้ายโตเกียวดิสนีย์",size:"L",chest:22.5,length:25,code:"ช032",img:""},
+  {id:77,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์กับพลูโต สกรีนจม",size:"M",chest:20,length:27.5,code:"ล080",img:""},
+  {id:78,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ เป็ดโดนัลด์ดั๊ก งานป้ายดิสนีย์ สีดำ",size:"L",chest:22.5,length:28.5,code:"ว062",img:""},
+  {id:79,cat:"สัตวในดิสนีย",name:"เสื้อ หมา 101 สีดำ งานป้าย",size:"XL",chest:23,length:28,code:"ด029",img:""},
+  {id:80,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงเบลล์ เจ้าชายอสูร สีเทา",size:"L",chest:21,length:27,code:"ม058",img:""},
+  {id:82,cat:"ซานริโอ/แครแบร",name:"เสื้อ สเวตเตอร์ลายคิตตี้ สีดำ ซานริโอ",size:"XL",chest:23,length:24,code:"ช031",img:""},
+  {id:84,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ เป็ดโดนัลด์ดั๊ก บิ๊กเฟส ป้ายโตเกียวดิสนีย์",size:"L",chest:21,length:27,code:"ร040",img:""},
+  {id:85,cat:"สตอเบอรรี่",name:"เสื้อ สตอเบอร์รี่ช็อตเคก สีชมพู",size:"M",chest:19.5,length:27,code:"ฮ030",img:""},
+  {id:86,cat:"สัตวในดิสนีย",name:"เสื้อ กระต่ายแบมบิ สีขาว สกรีนจม",size:"L",chest:21.5,length:28,code:"ส028",img:""},
+  {id:87,cat:"สัตวในดิสนีย",name:"หมาเลดี้ สีชมพู",size:"M",chest:20.5,length:28,code:"ค038",img:""},
+  {id:88,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์พอมด์ สีกรม แขนยาว งานปก",size:"L",chest:21,length:27,code:"ร018",img:""},
+  {id:91,cat:"ซานริโอ/แครแบร",name:"เสื้อ ซานริโอ คิตตี้สีม่วง",size:"L",chest:21,length:29.5,code:"บ009",img:""},
+  {id:92,cat:"สัตวในดิสนีย",name:"เสื้อ ช้างดัมโบ สีกรม",size:"L",chest:22,length:29,code:"จ045",img:""},
+  {id:95,cat:"ซานริโอ/แครแบร",name:"เสื้อ หมีแครแบร์ สีม่วง ลายหน้าหลัง",size:"3XL",chest:28.5,length:30,code:"ช055",img:""},
+  {id:96,cat:"ซานริโอ/แครแบร",name:"เสื้อ หมีแครแบร์สีเทา",size:"XL",chest:23.5,length:30,code:"พ020",img:""},
+  {id:100,cat:"ซานริโอ/แครแบร",name:"เสื้อ หมีแครแบร์ สีดำ สามตัว",size:"M",chest:20,length:29,code:"ล022",img:""},
+  {id:101,cat:"สัตวในดิสนีย",name:"เสื้อ ไลออนคิง สีขาว สกรีนจม",size:"L",chest:21,length:31,code:"พ027",img:""},
+  {id:105,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ ปราสาทดิสนีย์ สกรีนจม สีขาว ลายหน้าหลัง",size:"XL",chest:24,length:26,code:"น052",img:""},
+  {id:106,cat:"สัตวในดิสนีย",name:"เสื้อ ไลออนคิงสีเทา",size:"L",chest:22.5,length:28.5,code:"ม046",img:""},
+  {id:107,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ กู๊ฟฟี่ สีครีม",size:"3XL",chest:27,length:32,code:"ล036",img:""},
+  {id:109,cat:"ซานริโอ/แครแบร",name:"เสื้อ โปเชโกะ สีเหลืองอ่อน ลายหลัง",size:"L",chest:22,length:27.5,code:"จ006",img:""},
+  {id:114,cat:"ซานริโอ/แครแบร",name:"เสื้อซานริโอ ชินนามอนโรล สีเหลืองอ่อน",size:"XL",chest:24.5,length:29,code:"บ050",img:""},
+  {id:117,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ สเวตเตอร์สีขาว มิกกี้เมาส์",size:"L",chest:21,length:24,code:"ข03",img:""},
+  {id:119,cat:"สัตวในดิสนีย",name:"เสื้อ ไลออนคิง สีเทา",size:"L",chest:22.5,length:27,code:"ม009",img:""},
+  {id:120,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์พอมด์ สกรีนจม งานยูนิโค",size:"L",chest:21,length:27,code:"ล017",img:""},
+  {id:121,cat:"สัตวในดิสนีย",name:"เสื้อ แมวอลิส สกรีนจม สีขาว",size:"M",chest:19.5,length:27,code:"บ033",img:""},
+  {id:122,cat:"สัตวในดิสนีย",name:"เสื้อ หมา 101 สีม่วง งานป้าย",size:"L",chest:22,length:25,code:"ด046",img:""},
+  {id:126,cat:"สตอเบอรรี่",name:"เสื้อ สตอเบอร์รี่ช็อตเคก น้องบลอสซัม",size:"M",chest:19.5,length:27.5,code:"ค027",img:""},
+  {id:131,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์และพลูโต สีแดง คริสต์มาส",size:"M",chest:19.5,length:27,code:"น078",img:""},
+  {id:133,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์และเพื่อน สีเหลืองอ่อน คริสต์มาส",size:"L",chest:21,length:29,code:"ม063",img:""},
+  {id:139,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงเบลล์ สีม่วง",size:"XL",chest:23.5,length:27,code:"ช017",img:""},
+  {id:142,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์และเพื่อน สีฟ้า งานสเวตเตอร์",size:"2XL",chest:26.5,length:27,code:"ข66",img:""},
+  {id:143,cat:"ซานริโอ/แครแบร",name:"เสื้อซานริโอ มายเมโลดี้ สีขาว หน้าปก",size:"M",chest:20,length:26,code:"ม079",img:""},
+  {id:145,cat:"สัตวในดิสนีย",name:"เสื้อ ลูมิแอร์ เชิงเทียน โฉมงามกับเจ้าชายอสูร",size:"L",chest:22.5,length:24.5,code:"ม012",img:""},
+  {id:146,cat:"สตอเบอรรี่",name:"เสื้อ สตอเบอร์รี่ช็อตเคก สกรีนจม สีขาว",size:"L",chest:21,length:29,code:"ฮ038",img:""},
+  {id:149,cat:"สัตวในดิสนีย",name:"เสื้อ ชิพแอนด์เดล สีฟ้า",size:"L",chest:21.5,length:29,code:"จ014",img:""},
+  {id:154,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ คนแคระ สีดำ ธีมฮาโลวีน",size:"L",chest:21,length:28,code:"ก033",img:""},
+  {id:155,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงมู่หลาน สีเทา",size:"M",chest:19.5,length:25,code:"ม004",img:""},
+  {id:158,cat:"สัตวในดิสนีย",name:"เสื้อ ไลออนคิง งานซาร่า ลายหน้าลายหลัง",size:"M",chest:20,length:24,code:"อ021",img:""},
+  {id:160,cat:"สัตวในดิสนีย",name:"เสื้อ ไลออนคิง สีครีม สกรีนจม",size:"L",chest:22.5,length:27,code:"ม033",img:""},
+  {id:163,cat:"ซานริโอ/แครแบร",name:"เสื้อ หมีแครแบร์สีขาว",size:"M",chest:19.5,length:29,code:"ป009",img:""},
+  {id:165,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ คนแคระ สีเทา ลายทะลุ",size:"XL",chest:23,length:28,code:"ท043",img:""},
+  {id:166,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มินนี่เมาส์ สีชมพู",size:"L",chest:22.5,length:30,code:"จ024",img:""},
+  {id:168,cat:"สัตวในดิสนีย",name:"เสื้อ ไลออนคิง สีดำ",size:"M",chest:20.5,length:28,code:"พ040",img:""},
+  {id:169,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ รวมมิกกี้เมาส์ สีดำ ป้ายโตเกียวดิสนีย์",size:"M",chest:20,length:26.5,code:"ช007",img:""},
+  {id:170,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ เป็ดโดนัลด์ดั๊ก สีฟ้า ป้ายโตเกียวดิสนีย์",size:"M",chest:19,length:26,code:"ด062",img:""},
+  {id:172,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงรวม ผ้าฟอก สีดำ",size:"M",chest:20.5,length:27,code:"ป010",img:""},
+  {id:175,cat:"ซานริโอ/แครแบร",name:"เสื้อ สีกรม มายลิตเติ้ลโพนี่",size:"M",chest:19.5,length:28,code:"ข016",img:""},
+  {id:177,cat:"สัตวในดิสนีย",name:"เสื้อ ช้างดัมโบ สีน้ำเงิน งานป้าย",size:"M",chest:19,length:23,code:"ป050",img:""},
+  {id:182,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ ชิพแอนด์เดล สีขาว ป้ายโตเกียวดิสนีย์",size:"M",chest:20,length:24,code:"ว015",img:""},
+  {id:183,cat:"สัตวในดิสนีย",name:"เสื้อ แมวอลิส มัดย้อม",size:"XL",chest:23,length:29,code:"ข036",img:""},
+  {id:184,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์และมินนี่เมาส์ สีชมพูเข้ม งานป้าย",size:"XL",chest:24.5,length:29,code:"ป045",img:""},
+  {id:185,cat:"สัตวในดิสนีย",name:"เสื้อ แมวอลิส บิ๊กเฟส สีดำ",size:"M",chest:19,length:25.5,code:"ม120",img:""},
+  {id:186,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงเบลล์ โฉมงามกับเจ้าชายอสูร สีดำ",size:"L",chest:21.5,length:28.5,code:"ม025",img:""},
+  {id:193,cat:"สัตวในดิสนีย",name:"เสื้อ หมา 101 สีฟ้า",size:"L",chest:22.5,length:27,code:"ร028",img:""},
+  {id:200,cat:"สัตวในดิสนีย",name:"เสื้อ ไลออนคิง สีเทา",size:"M",chest:20,length:26,code:"ม035",img:""},
+  {id:201,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงออโรร่า เจ้าหญิงนิทรา สีม่วง",size:"XL",chest:23.5,length:26,code:"ม024",img:""},
+  {id:205,cat:"เจาหญิง",name:"เสื้อ เจ้าหญิงแอเรียล ลาย ovp งานป้ายโตเกียวดิสนีย์",size:"M",chest:19,length:25,code:"ฮ011",img:""},
+  {id:206,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์พอมด์ สีกรม",size:"XL",chest:24,length:26.5,code:"ช029",img:""},
+  {id:207,cat:"สัตวในดิสนีย",name:"เสื้อ ไลออนคิง สีขาว สกรีนจม",size:"L",chest:21,length:25.5,code:"ว008",img:""},
+  {id:209,cat:"สัตวในดิสนีย",name:"เสื้อ แมวอลิสโตแคท แมวมารี สีฟ้า ลายกระเป๋าเล็ก",size:"XL",chest:24.5,length:31,code:"ช035",img:""},
+  {id:228,cat:"ซานริโอ/แครแบร",name:"เสื้อ หมีแครแบร์ สีฟ้า",size:"XL",chest:23.5,length:30,code:"ม145",img:""},
+  {id:309,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ ลายดิสนีย์ 50 ปี สีน้ำเงิน",size:"S",chest:18.5,length:26,code:"",img:""},
+  {id:411,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์และเพื่อนปี 2010 สีชมพู",size:"L",chest:22.5,length:28,code:"ง029",img:""},
+  {id:469,cat:"ซานริโอ/แครแบร",name:"เสื้อ คิตตี้ สีฟ้า ลายดอกไม้",size:"L",chest:21,length:28,code:"ม169",img:""},
+  {id:471,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อ มิกกี้เมาส์ ลูกโป่ง ลายหน้าหลัง สีขาว",size:"L",chest:21.5,length:24,code:"ม105",img:""},
+  {id:473,cat:"ซานริโอ/แครแบร",name:"เสื้อ สเวตเตอร์ หมีแครแบร์ ลาย ovp สกรีนจม",size:"L",chest:22,length:24,code:"ร019",img:""},
+  {id:477,cat:"สัตวในดิสนีย",name:"เสื้อ ช้างดัมโบ สีขาว ลายสกรีนสี่เหลี่ยม",size:"L",chest:21,length:24.5,code:"A013",img:""},
+  {id:478,cat:"เจาหญิง",name:"เสื้อ นางเงือกน้อย แอเรียล สีดำ ลายเส้น",size:"L",chest:22.5,length:27,code:"ล068",img:""},
+  {id:482,cat:"มิกกี้และเพื่อนๆ",name:"มิกกี้พอมด์ สีขาว สกรีนจม",size:"M",chest:19.5,length:28,code:"ป032",img:""},
+  {id:483,cat:"มิกกี้และเพื่อนๆ",name:"มิกกี้สีเทา ลายทะลุหน้าหลัง",size:"M",chest:19.5,length:27,code:"ท009",img:""},
+  {id:484,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่เขียว",size:"L",chest:22.5,length:28,code:"ฟ028",img:""},
+  {id:485,cat:"สัตวในดิสนีย",name:"หมา 101 สีเหลือง งานปก",size:"XL",chest:24.5,length:27,code:"ด087",img:""},
+  {id:558,cat:"มิกกี้และเพื่อนๆ",name:"เป็ดสามตัวอุดหู สีขาว",size:"XL",chest:24,length:29,code:"ม138",img:""},
+  {id:559,cat:"มิกกี้และเพื่อนๆ",name:"คนแคระ สีน้ำเงิน",size:"2XL",chest:26,length:32,code:"บ054",img:""},
+  {id:560,cat:"มิกกี้และเพื่อนๆ",name:"มิกกี้ ovp",size:"L",chest:21,length:26,code:"ก066",img:""},
+  {id:562,cat:"เจาหญิง",name:"อลิส สีดำ",size:"L",chest:21,length:28.5,code:"ด048",img:""},
+  {id:563,cat:"เจาหญิง",name:"อลิส สีขาว งานยูนิโค",size:"L",chest:22,length:24,code:"ช023",img:""},
+  {id:574,cat:"มิกกี้และเพื่อนๆ",name:"มิกกี้รวมสีชมพูเข้ม",size:"2XL",chest:25,length:28,code:"ล028",img:""},
+  {id:579,cat:"ซานริโอ/แครแบร",name:"คิตตี้ลายรวม สีเขียว งานผ้าฟอก",size:"XL",chest:24,length:23,code:"ม066",img:""},
+  {id:645,cat:"ซานริโอ/แครแบร",name:"คุโรมิ มายเม สีขาว ยูนิโค",size:"M",chest:19,length:25.5,code:"พ072",img:"https://www.instagram.com/p/DWJeecrEl3d/"},
+  {id:647,cat:"ซานริโอ/แครแบร",name:"คิตตี้ 12 ราศี สีขาว",size:"XL",chest:23.5,length:30,code:"จ098",img:"https://www.instagram.com/p/DWJe3glEpD2/"},
+  {id:648,cat:"สัตวในดิสนีย",name:"เสื้อขาว ลายซิมบา",size:"XL",chest:23,length:25,code:"ป075",img:"https://www.instagram.com/p/DWJfUHPktFG/"},
+  {id:650,cat:"มิกกี้และเพื่อนๆ",name:"คนแคระ สีฟ้าตุ่น",size:"3XL",chest:28,length:31,code:"ข006",img:""},
+  {id:653,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เสื้อ โคราไลน สีกรม ตากระดุม",size:"M",chest:19,length:28,code:"ร034",img:""},
+  {id:657,cat:"สัตวในดิสนีย",name:"ชิพแอนด์เดล สีเหลือง",size:"L",chest:22,length:24.5,code:"ก083",img:""},
+  {id:658,cat:"เจาหญิง",name:"สโนว์ไวท์ สีขาว",size:"L",chest:21.5,length:23,code:"พ064",img:""},
+  {id:659,cat:"ซานริโอ/แครแบร",name:"คุโรมิ มายเมโลดี้ มัดย้อมทูโทน ม่วงดำ",size:"M",chest:20,length:28,code:"บ055",img:""},
+  {id:661,cat:"สัตวในดิสนีย",name:"กวางแบมบิ สีฟ้าอ่อน ซาร่า ดิสนีย์",size:"XL",chest:24,length:22,code:"ด115",img:""},
+  {id:663,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เสื้อ ไนท์แมร์บีฟอร์คริสต์มาส",size:"M",chest:19,length:26,code:"ข033",img:""},
+  {id:664,cat:"สัตวในดิสนีย",name:"หนูแรตตาตุ้ยสีเหลือง",size:"S",chest:18.5,length:28.5,code:"ด101",img:""},
+  {id:665,cat:"ซานริโอ/แครแบร",name:"มายเม คุโรมิ สีชมพู ลายหน้าหลัง",size:"M",chest:19,length:26,code:"ป072",img:""},
+  {id:667,cat:"สัตวในดิสนีย",name:"ซิมบา สีดำ ลายเส้นทอง",size:"XL",chest:23.5,length:34,code:"ว070",img:""},
+  {id:668,cat:"มิกกี้และเพื่อนๆ",name:"มินนี่เมาส์ สีขาว",size:"M",chest:20.5,length:29,code:"ด108",img:""},
+  {id:669,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่ช็อตเคก",size:"2XL",chest:26,length:29,code:"A017",img:""},
+  {id:670,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่ สีชมพูอ่อน",size:"M",chest:20,length:26.5,code:"ฮ023",img:""},
+  {id:672,cat:"ซานริโอ/แครแบร",name:"กบเคโระ สีเทา",size:"L",chest:22,length:29,code:"น085",img:""},
+  {id:673,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่ สีชมพูมัดย้อม",size:"M",chest:20,length:29,code:"ฟ010",img:""},
+  {id:674,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เสื้อ ผีน้อยแคสเปอร์ขี่ไม้กวาด สกรีนจม สีขาว",size:"L",chest:22,length:27,code:"ด070",img:""},
+  {id:676,cat:"มิกกี้และเพื่อนๆ",name:"คนแคระสีเทา",size:"L",chest:22,length:27,code:"น004",img:""},
+  {id:681,cat:"เจาหญิง",name:"นางเงือกน้อย ผิวสี เสื้อสีดำ",size:"XL",chest:23.5,length:32,code:"พ070",img:""},
+  {id:684,cat:"มิกกี้และเพื่อนๆ",name:"เสื้อสีเทา มิกกี้พอมด์ 2014",size:"L",chest:22,length:29.5,code:"ว011",img:""},
+  {id:685,cat:"มิกกี้และเพื่อนๆ",name:"คนแคระ สีเทา",size:"XL",chest:24,length:28,code:"ข030",img:""},
+  {id:692,cat:"สัตวในดิสนีย",name:"สเวตเตอร์สีเขียว ลายไลออนคิง รวม",size:"L",chest:22,length:27,code:"ข021",img:""},
+  {id:693,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่ สีขาว สกรีนจม",size:"M",chest:19,length:28,code:"ค025",img:""},
+  {id:696,cat:"มิกกี้และเพื่อนๆ",name:"มิกกี้ สีเทา ปี 2020 ลายรวม",size:"L",chest:22,length:27,code:"ข012",img:""},
+  {id:700,cat:"มิกกี้และเพื่อนๆ",name:"คนแคระ สีเทา",size:"M",chest:20,length:25,code:"จ051",img:""},
+  {id:702,cat:"มิกกี้และเพื่อนๆ",name:"มิกกี้เมาส์สีน้ำเงินเข้ม งานปกมิกกี้",size:"L",chest:22,length:30,code:"ด012",img:""},
+  {id:706,cat:"มิกกี้และเพื่อนๆ",name:"มิกกี้เมาส์และเพื่อนๆ 2014 สีน้ำเงินเข้ม",size:"2XL",chest:25,length:31.5,code:"ป100",img:""},
+  {id:707,cat:"ซานริโอ/แครแบร",name:"คิตตี้รถแข่ง สีดำ",size:"L",chest:22.5,length:29,code:"ล096",img:""},
+  {id:715,cat:"ซานริโอ/แครแบร",name:"หมีแครแบร์ตัวฟ้า เสื้อดำ",size:"M",chest:20,length:25,code:"ล089",img:""},
+  {id:719,cat:"สัตวในดิสนีย",name:"ไลออนคิง สีขาว ลายซิมบากับนก",size:"L",chest:21,length:25,code:"ก078",img:""},
+  {id:720,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เสื้อ งานผ้าฟอก สีเทา ผีน้อยแคสเปอร์ ลายหลัง",size:"XL",chest:23,length:34,code:"ร024",img:""},
+  {id:722,cat:"มิกกี้และเพื่อนๆ",name:"กรูฟฟี่ ลายทะลุ สีส้ม",size:"L",chest:21,length:28,code:"ว034",img:""},
+  {id:723,cat:"เจาหญิง",name:"เจ้าหญิงออโรร่า สีขาว",size:"2XL",chest:25,length:25,code:"ก017",img:""},
+  {id:724,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เสื้อ ผีเด็ก ยมทูต สีขาว งานสกรีนจม",size:"M",chest:20,length:25,code:"ช022",img:""},
+  {id:727,cat:"เจาหญิง",name:"เจ้าหญิงสโนว์ไวท์ สีกรม",size:"L",chest:21,length:26.5,code:"บ053",img:""},
+  {id:729,cat:"สัตวในดิสนีย",name:"ไลออนคิง ลายทะลุ สีน้ำตาล",size:"L",chest:22,length:28,code:"ป080",img:""},
+  {id:731,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เสื้อ โคราไลน สีดำ ตากระดุม",size:"M",chest:20,length:29.5,code:"ด041",img:""},
+  {id:733,cat:"ซานริโอ/แครแบร",name:"คุโรมิ มายเม มัดย้อม สีม่วง ลายห้องนอน",size:"L",chest:21.5,length:29,code:"ร068",img:""},
+  {id:737,cat:"ซานริโอ/แครแบร",name:"ทวินนิ่ง สตาร์ สีฟ้า",size:"XL",chest:23,length:29,code:"ม084",img:""},
+  {id:738,cat:"สัตวในดิสนีย",name:"กวางแบมบิ สีแดงน้ำตาล",size:"L",chest:21,length:28,code:"ล101",img:""},
+  {id:739,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่สีเขียวลายเดี่ยว",size:"M",chest:20,length:27,code:"ต032",img:""},
+  {id:741,cat:"สัตวในดิสนีย",name:"ช้างดัมโบ สีดำเต็มตัว ป้ายซาร่า",size:"XL",chest:24.5,length:29.5,code:"ด103",img:""},
+  {id:742,cat:"สัตวในดิสนีย",name:"หมาลายรวมสีกรม",size:"L",chest:21,length:26,code:"ป087",img:""},
+  {id:751,cat:"สัตวในดิสนีย",name:"กระต่ายอลิซอินวันเดอร์แลนด์ สีกรม",size:"M",chest:19.5,length:26,code:"ก071",img:""},
+  {id:758,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เสื้อ ผีน้อย แคสเปอร์ สีกรม งานมัดย้อม",size:"M",chest:20,length:27,code:"ด091",img:""},
+  {id:759,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เสื้อ โคโค สีขาว สกรีนจม",size:"M",chest:20,length:28,code:"ข013",img:""},
+  {id:760,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เสื้อ จุนจิ อิโตะ สยองขวัญญี่ปุ่น สีดำ",size:"M",chest:20,length:26.5,code:"ด079",img:""},
+  {id:761,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"ไนท์แมร์บีฟอร์คริสต์มาส สีดำ",size:"L",chest:22.5,length:28,code:"ป062",img:""},
+  {id:762,cat:"สัตวในดิสนีย",name:"กระต่ายแบมบิ สีเทา",size:"L",chest:22,length:26.5,code:"พ079",img:""},
+  {id:763,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"เจ้าสาวศพสวย สีม่วง",size:"XL",chest:24,length:30,code:"ล093",img:""},
+  {id:764,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"ไนท์แมร์ สีดำ ลายเดี่ยว",size:"L",chest:21,length:29.5,code:"ล092",img:""},
+  {id:765,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"ไนท์แมร์ ลายรวมสีดำ",size:"M",chest:20,length:27,code:"ล095",img:""},
+  {id:766,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"ไนท์แมร์บีฟอร์คริสต์มาส สีดำ",size:"3XL",chest:28,length:31,code:"พ025",img:""},
+  {id:767,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"ไนท์แมร์สีดำ ลายคู่",size:"XL",chest:24,length:27,code:"ล100",img:""},
+  {id:790,cat:"สัตวในดิสนีย",name:"แมวอลิส เสื้อสีดำ",size:"M",chest:20,length:27,code:"",img:"https://www.instagram.com/p/DZSS6GFElS3/"},
+  {id:792,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"ไนท์แมร์ นางเอก สีดำ",size:"M",chest:19.5,length:28,code:"",img:"https://www.instagram.com/p/DZSTi9wknF7/"},
+  {id:793,cat:"ไนทแมร/ผีนอย/เจาสาว",name:"ไนท์แมร์สีขาว พระเอกกับหมา",size:"L",chest:22,length:28,code:"",img:"https://www.instagram.com/p/DZSTkGTEnQq/"},
+  {id:794,cat:"สัตวในดิสนีย",name:"ไลออนคิง ลายคู่",size:"2XL",chest:25.5,length:35,code:"",img:"https://www.instagram.com/p/DZST7J0Eo4p/"},
+  {id:797,cat:"เจาหญิง",name:"โพคาฮอนทัส สีขาว",size:"M",chest:20.5,length:29,code:"",img:"https://www.instagram.com/p/DZSU_gJkm_J/"},
+  {id:798,cat:"สัตวในดิสนีย",name:"หมา 101 สีขาว",size:"L",chest:21,length:25,code:"",img:"https://www.instagram.com/p/DZSVDxAkn55/"},
+  {id:800,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่สีเหลืองอ่อน",size:"XL",chest:24.5,length:28.5,code:"",img:"https://www.instagram.com/p/DZSVKUHkpNC/"},
+  {id:801,cat:"เจาหญิง",name:"เสื้อสีขาว ทิงเกอร์เบลล์",size:"M",chest:20,length:24,code:"",img:"https://www.instagram.com/p/DZSVSSLkq26/"},
+  {id:802,cat:"สัตวในดิสนีย",name:"หมา 101 UT หน้าวันพอยหลังสกรีน",size:"M",chest:20.5,length:24,code:"",img:"https://www.instagram.com/p/DZSWHSIEgPJ/"},
+  {id:803,cat:"สตอเบอรรี่",name:"เสื้อสตอเบอร์รี่ สีขาว",size:"L",chest:22,length:29.5,code:"",img:"https://www.instagram.com/p/DZSWT96Elo7/"},
+  {id:805,cat:"สัตวในดิสนีย",name:"เสื้อยืดแขนยาว สีดำ ลายมูชู",size:"L",chest:21.5,length:27,code:"",img:"https://www.instagram.com/p/DZhuyDJkrmO/"},
+  {id:806,cat:"ซานริโอ/แครแบร",name:"มัดย้อมสีสดใส แครแบร์",size:"L",chest:21.5,length:27,code:"",img:"https://www.instagram.com/p/DZhvKN5Eg-B/"},
+  {id:807,cat:"สัตวในดิสนีย",name:"กวางแบมบิสีดำ",size:"XL",chest:23,length:25,code:"",img:"https://www.instagram.com/p/DZhvRb2kiLP/"},
+  {id:808,cat:"สัตวในดิสนีย",name:"ช้างดัมโบ สีดำ ป้ายซาร่า",size:"L",chest:21,length:26,code:"",img:"https://www.instagram.com/p/DZhvbDvEmJH/"},
+  {id:809,cat:"ซานริโอ/แครแบร",name:"แครแบร์สีฟ้า",size:"M",chest:20.5,length:28,code:"",img:"https://www.instagram.com/p/DZhvdVBkvH2/"},
+  {id:810,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่สีชมพูเข้ม",size:"4XL",chest:30,length:29,code:"",img:"https://www.instagram.com/p/DZhvet0EvNk/"},
+  {id:811,cat:"สัตวในดิสนีย",name:"ไลออนคิง สีขาว ตัวเดียว",size:"XL",chest:24,length:26,code:"",img:"https://www.instagram.com/p/DZhvuSvklqw/"},
+  {id:812,cat:"เจาหญิง",name:"มู่หลาน สีขาว",size:"XL",chest:23,length:28,code:"",img:"https://www.instagram.com/p/DZhvwiskoEv/"},
+  {id:813,cat:"เจาหญิง",name:"เจ้าหญิงแอเรียล สีดำลายเส้น",size:"L",chest:21,length:25,code:"",img:"https://www.instagram.com/p/DZhvx9VEvva/"},
+  {id:814,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่ สีชมพูอ่อน",size:"L",chest:21.5,length:28,code:"",img:"https://www.instagram.com/p/DZhwGI5kucx/"},
+  {id:816,cat:"ซานริโอ/แครแบร",name:"คิตตี้รถแข่ง สีดำ",size:"M",chest:19.5,length:26,code:"",img:"https://www.instagram.com/p/DZzwEGqkiHP/"},
+  {id:818,cat:"ซานริโอ/แครแบร",name:"หมีแครแบร์รวม สีขาว",size:"XL",chest:24.5,length:27,code:"",img:"https://www.instagram.com/p/DZzxI4xErYA/"},
+  {id:819,cat:"มิกกี้และเพื่อนๆ",name:"มิกกี้เมาส์งานปก สีขาว",size:"2XL",chest:26,length:32,code:"",img:"https://www.instagram.com/p/DZzxUu6kpYw/"},
+  {id:820,cat:"สตอเบอรรี่",name:"สตอเบอร์รี่ สีชมพู",size:"L",chest:21,length:28.5,code:"",img:"https://www.instagram.com/p/DZzxomZEoil/"},
+  {id:821,cat:"มิกกี้และเพื่อนๆ",name:"พลูโตหน้าหลัง สีแดงเลือดหมู",size:"S",chest:18.5,length:26,code:"",img:"https://www.instagram.com/p/DZzxuWrkhHt/"},
+  {id:823,cat:"สัตวในดิสนีย",name:"กวางแบมบิ สีเทา",size:"L",chest:22,length:24.5,code:"",img:"https://www.instagram.com/p/DZzy1AEEm8Q/"},
+  {id:826,cat:"เจาหญิง",name:"ปีเตอร์แพน ลาย ovp ป้ายโตเกียวดิสนีย์",size:"L",chest:21,length:26,code:"",img:"https://www.instagram.com/p/DZzzvNqkjrf/"},
+  {id:783,cat:"เจาหญิง",name:"เจ้าหญิง เงือกน้อย แอเรียล",size:"M",chest:20.5,length:21,code:"บ076",img:"https://www.instagram.com/p/DY9u1v8kiQd/"},
+  {id:494,cat:"อื่นๆ",name:"ลูนนี่ตูน บัคบันนี่ ลายหน้า สกรีนหน้าฟอน",size:"L",chest:22.5,length:27,code:"ม160",img:""},
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────
+// แก้รหัสผ่านแอดมินได้ที่นี่ (ตัวอักษร/ตัวเลขอะไรก็ได้)
+const ADMIN_PASSWORD = 'cutieee2026';
+
+let products = JSON.parse(localStorage.getItem('hc_products') || 'null') || RAW_PRODUCTS.map(p => ({...p, price: null, sold: false}));
+// migrate older saved data that may not have a `sold` field yet
+products = products.map(p => ({ sold: false, ...p }));
+let selectedCat = 'ทั้งหมด';
+let selectedSize = '';
+let isAdmin = false;
+
+function save() {
+  try {
+    localStorage.setItem('hc_products', JSON.stringify(products));
+  } catch (e) {
+    showToast('⚠️ พื้นที่เก็บข้อมูลเต็ม! รูปที่อัปโหลดอาจไม่ถูกบันทึก ลองลบรูปบางสินค้าหรือใช้ลิงก์ภายนอกแทน');
+  }
+}
+
+// ─── ADMIN LOGIN ─────────────────────────────────────────────────────
+function isLoggedIn() { return sessionStorage.getItem('hc_admin_ok') === '1'; }
+function doLogin() {
+  const val = document.getElementById('login-pass').value;
+  if (val === ADMIN_PASSWORD) {
+    sessionStorage.setItem('hc_admin_ok', '1');
+    document.getElementById('login-overlay').classList.remove('open');
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-error').textContent = '';
+    enterAdmin();
+  } else {
+    document.getElementById('login-error').textContent = 'รหัสผ่านไม่ถูกต้อง';
+  }
+}
+function logoutAdmin() {
+  sessionStorage.removeItem('hc_admin_ok');
+  isAdmin = false;
+  document.getElementById('admin-panel').classList.remove('open');
+  document.getElementById('shop-view').classList.remove('hidden');
+  document.getElementById('cat-bar').style.display = '';
+  document.getElementById('filter-bar').style.display = '';
+  document.querySelector('.admin-toggle').textContent = '⚙ Admin';
+}
+
+// ─── CATEGORIES ──────────────────────────────────────────────────────
+const CATS = ['ทั้งหมด','มิกกี้และเพื่อนๆ','ซานริโอ/แครแบร','สัตวในดิสนีย','เจาหญิง','สตอเบอรรี่','ไนทแมร/ผีนอย/เจาสาว','อื่นๆ'];
+const CAT_LABELS = {
+  'ทั้งหมด':'ทั้งหมด',
+  'มิกกี้และเพื่อนๆ':'🐭 มิกกี้และเพื่อนๆ',
+  'ซานริโอ/แครแบร':'🎀 ซานริโอ',
+  'สัตวในดิสนีย':'🦁 สัตว์ดิสนีย์',
+  'เจาหญิง':'👸 เจ้าหญิง',
+  'สตอเบอรรี่':'🍓 สตรอเบอร์รี่',
+  'ไนทแมร/ผีนอย/เจาสาว':'🎃 ไนท์แมร์',
+  'อื่นๆ':'✨ อื่นๆ'
+};
+
+function initCats() {
+  const inner = document.getElementById('cat-inner');
+  CATS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (c === selectedCat ? ' active' : '');
+    btn.textContent = CAT_LABELS[c] || c;
+    btn.dataset.cat = c;
+    btn.onclick = () => { selectedCat = c; updateCatBtns(); filterProducts(); };
+    inner.appendChild(btn);
+  });
+}
+function updateCatBtns() {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === selectedCat));
+}
+
+// ─── SIZE FILTERS ────────────────────────────────────────────────────
+const SIZES = ['S','M','L','XL','2XL','3XL','4XL'];
+function initSizes() {
+  const wrap = document.getElementById('size-filters');
+  SIZES.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'size-btn';
+    btn.textContent = s;
+    btn.dataset.size = s;
+    btn.onclick = () => {
+      selectedSize = selectedSize === s ? '' : s;
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.dataset.size === selectedSize));
+      document.getElementById('clear-size').classList.toggle('visible', !!selectedSize);
+      filterProducts();
+    };
+    wrap.appendChild(btn);
+  });
+}
+function clearSize() {
+  selectedSize = '';
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('clear-size').classList.remove('visible');
+  filterProducts();
+}
+
+// ─── FILTER & RENDER ─────────────────────────────────────────────────
+function getFiltered() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  return products.filter(p => {
+    if (p.sold) return false;
+    if (selectedCat !== 'ทั้งหมด' && p.cat !== selectedCat) return false;
+    if (selectedSize && p.size !== selectedSize) return false;
+    if (q) {
+      const blob = [p.name, p.cat, p.size, p.code].join(' ').toLowerCase();
+      return blob.includes(q);
+    }
+    return true;
+  });
+}
+
+function filterProducts() {
+  const filtered = getFiltered();
+  renderGrid(filtered);
+  document.getElementById('result-count').textContent = filtered.length + ' ชิ้น';
+}
+
+function renderGrid(list) {
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = '';
+  if (!list.length) {
+    grid.innerHTML = '<div class="no-results"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>ไม่พบสินค้าที่ตรงกัน</p></div>';
+    return;
+  }
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.onclick = () => openModal(p);
+    const hasImg = p.img && (p.img.startsWith('http') || p.img.startsWith('data:image'));
+    card.innerHTML = `
+      <div class="card-img">
+        ${hasImg
+          ? `<img src="${p.img}" alt="${p.name}" onerror="this.parentElement.innerHTML='<div class=\\'card-img-placeholder\\'><svg width=\\'36\\' height=\\'36\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1.5\\'><rect x=\\'3\\' y=\\'3\\' width=\\'18\\' height=\\'18\\' rx=\\'2\\'/></svg><span>ดูรูปใน IG</span></div>'">`
+          : `<div class="card-img-placeholder"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-4 4 4"/><circle cx="8" cy="14" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>`
+        }
+        <span class="card-size-tag">${p.size}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${CAT_LABELS[p.cat] || p.cat}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-meta">
+          <span class="card-dims">อก ${p.chest}" · ยาว ${p.length}"</span>
+          ${p.price ? `<span class="card-price">฿${p.price}</span>` : `<span class="card-price no-price">ถามราคา</span>`}
+        </div>
+        ${p.code ? `<div class="card-id">รหัส: ${p.code}</div>` : ''}
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────
+function openModal(p) {
+  document.getElementById('modal-cat').textContent = CAT_LABELS[p.cat] || p.cat;
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('m-size').textContent = p.size;
+  document.getElementById('m-chest').textContent = p.chest + '"';
+  document.getElementById('m-length').textContent = p.length + '"';
+  document.getElementById('m-price').textContent = p.price ? '฿' + p.price : 'สอบถามราคา';
+  document.getElementById('m-price').className = 'modal-price' + (p.price ? '' : ' no-price');
+  document.getElementById('m-code').textContent = p.code ? 'รหัส: ' + p.code : '';
+
+  const imgEl = document.getElementById('modal-img');
+  const placeholder = document.getElementById('modal-placeholder');
+  const igLink = document.getElementById('modal-ig-link');
+  const mLink = document.getElementById('m-link');
+
+  // Clear old img
+  const oldImg = imgEl.querySelector('img');
+  if (oldImg) oldImg.remove();
+
+  const hasImg = p.img && (p.img.startsWith('http') || p.img.startsWith('data:image'));
+  if (hasImg) {
+    placeholder.style.display = 'none';
+    const img = document.createElement('img');
+    img.src = p.img;
+    img.alt = p.name;
+    img.onerror = () => {
+      img.remove();
+      placeholder.style.display = 'flex';
+      if (p.img.startsWith('http')) { igLink.style.display = 'inline-block'; igLink.href = p.img; }
+    };
+    imgEl.insertBefore(img, imgEl.firstChild);
+    if (p.img.startsWith('http')) { mLink.style.display = 'flex'; mLink.href = p.img; } else { mLink.style.display = 'none'; }
+    igLink.style.display = 'none';
+  } else {
+    placeholder.style.display = 'flex';
+    igLink.style.display = 'none';
+    mLink.style.display = 'none';
+  }
+
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('open');
+}
+
+// ─── ADMIN ───────────────────────────────────────────────────────────
+function toggleAdmin() {
+  if (isAdmin) { logoutAdmin(); return; }
+  if (isLoggedIn()) { enterAdmin(); return; }
+  document.getElementById('login-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('login-pass').focus(), 50);
+}
+
+function enterAdmin() {
+  isAdmin = true;
+  document.getElementById('admin-panel').classList.add('open');
+  document.getElementById('shop-view').classList.add('hidden');
+  document.getElementById('cat-bar').style.display = 'none';
+  document.getElementById('filter-bar').style.display = 'none';
+  document.querySelector('.admin-toggle').textContent = '← ออกจากระบบ';
+  renderAdminTable('');
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = products.length;
+  document.getElementById('stat-priced').textContent = products.filter(p => p.price).length;
+  document.getElementById('stat-no-price').textContent = products.filter(p => !p.price && !p.sold).length;
+  document.getElementById('stat-sold').textContent = products.filter(p => p.sold).length;
+  const bytes = new Blob([JSON.stringify(products)]).size;
+  const mb = bytes / (1024 * 1024);
+  const el = document.getElementById('stat-storage');
+  el.textContent = mb.toFixed(2) + ' MB';
+  el.style.color = mb > 4 ? 'var(--danger)' : '';
+}
+
+function renderAdminTable(q) {
+  const q2 = q.toLowerCase();
+  const list = products.filter(p => !q2 || [p.name,p.cat,p.size,p.code].join(' ').toLowerCase().includes(q2));
+  document.getElementById('admin-count').textContent = list.length;
+  const tbody = document.getElementById('admin-tbody');
+  tbody.innerHTML = '';
+  list.forEach(p => {
+    const tr = document.createElement('tr');
+    if (p.sold) tr.className = 'sold-row';
+    tr.innerHTML = `
+      <td>${p.id}</td>
+      <td class="td-name">${p.name}</td>
+      <td>${CAT_LABELS[p.cat]?.replace(/^[^ ]+ /,'') || p.cat}</td>
+      <td>${p.size}</td>
+      <td>${p.chest}"</td>
+      <td>${p.length}"</td>
+      <td class="${p.price ? 'td-price' : 'td-price no-price'}">${p.price ? '฿'+p.price : 'ยังไม่ใส่'}</td>
+      <td style="font-size:11px;color:var(--muted)">${p.code||'—'}</td>
+      <td>${p.sold ? '<span class="badge-sold">ขายแล้ว</span>' : ''}</td>
+      <td><div class="td-actions">
+        <button class="btn-sm" onclick="openDrawer(${p.id})">แก้ไข</button>
+        <button class="btn-sm ${p.sold ? 'unsold' : 'sold'}" onclick="toggleSold(${p.id})">${p.sold ? 'คืนสถานะ' : 'ขายแล้ว'}</button>
+        <button class="btn-sm danger" onclick="deleteProduct(${p.id})">ลบ</button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+  updateStats();
+}
+
+function toggleSold(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  p.sold = !p.sold;
+  save();
+  renderAdminTable(document.getElementById('admin-search-box').value);
+  showToast(p.sold ? '🏷 ทำเครื่องหมายว่าขายแล้ว' : '↩️ คืนสถานะเป็นยังไม่ขาย');
+}
+
+function openDrawer(id) {
+  resetForm();
+  if (id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('edit-id').value = id;
+    document.getElementById('f-name').value = p.name;
+    document.getElementById('f-cat').value = p.cat;
+    document.getElementById('f-size').value = p.size;
+    document.getElementById('f-chest').value = p.chest;
+    document.getElementById('f-length').value = p.length;
+    document.getElementById('f-price').value = p.price || '';
+    document.getElementById('f-code').value = p.code || '';
+    document.getElementById('f-img').value = p.img || '';
+    if (p.img) {
+      document.getElementById('img-preview').src = p.img;
+      document.getElementById('img-preview-wrap').style.display = 'block';
+    }
+    document.getElementById('drawer-title').textContent = 'แก้ไขสินค้า #' + id;
+  } else {
+    document.getElementById('drawer-title').textContent = 'เพิ่มสินค้าใหม่';
+  }
+  document.getElementById('drawer-overlay').classList.add('open');
+}
+function closeDrawer(e) {
+  if (e.target === document.getElementById('drawer-overlay')) closeDrawerDirect();
+}
+function closeDrawerDirect() {
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+
+// kept as an alias so any older reference still works
+function editProduct(id) { openDrawer(id); }
+
+function saveProduct() {
+  const editId = document.getElementById('edit-id').value;
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { showToast('กรุณาใส่ชื่อสินค้า'); return; }
+  const existing = editId ? products.find(p => p.id === parseInt(editId)) : null;
+  const obj = {
+    id: editId ? parseInt(editId) : Date.now(),
+    name,
+    cat: document.getElementById('f-cat').value,
+    size: document.getElementById('f-size').value,
+    chest: parseFloat(document.getElementById('f-chest').value) || 0,
+    length: parseFloat(document.getElementById('f-length').value) || 0,
+    price: document.getElementById('f-price').value ? parseInt(document.getElementById('f-price').value) : null,
+    code: document.getElementById('f-code').value.trim(),
+    img: document.getElementById('f-img').value.trim(),
+    sold: existing ? existing.sold : false,
+  };
+  if (editId) {
+    const idx = products.findIndex(p => p.id === parseInt(editId));
+    if (idx > -1) products[idx] = obj;
+    showToast('✅ แก้ไขสินค้าแล้ว');
+  } else {
+    products.unshift(obj);
+    showToast('✅ เพิ่มสินค้าแล้ว');
+  }
+  save();
+  closeDrawerDirect();
+  renderAdminTable(document.getElementById('admin-search-box').value);
+}
+
+function deleteProduct(id) {
+  if (!confirm('ลบสินค้านี้?')) return;
+  products = products.filter(p => p.id !== id);
+  save();
+  renderAdminTable(document.getElementById('admin-search-box').value);
+  showToast('🗑 ลบสินค้าแล้ว');
+}
+
+function resetForm() {
+  document.getElementById('edit-id').value = '';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-cat').selectedIndex = 0;
+  document.getElementById('f-size').value = 'M';
+  document.getElementById('f-chest').value = '';
+  document.getElementById('f-length').value = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-code').value = '';
+  document.getElementById('f-img').value = '';
+  document.getElementById('f-img-file').value = '';
+  document.getElementById('img-preview-wrap').style.display = 'none';
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(products, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'hello-cutieee-products-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('⬇ ดาวน์โหลดไฟล์สำรองแล้ว');
+}
+
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showToast('กรุณาเลือกไฟล์รูปภาพ'); return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      // ย่อขนาดรูปให้ด้านที่ยาวที่สุดไม่เกิน 700px และบีบเป็น JPEG เพื่อให้ไฟล์เบาลง
+      const MAX = 700;
+      let w = img.width, h = img.height;
+      if (w >= h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      else if (h > w && h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+      document.getElementById('f-img').value = dataUrl;
+      document.getElementById('img-preview').src = dataUrl;
+      document.getElementById('img-preview-wrap').style.display = 'block';
+      const kb = Math.round(dataUrl.length * 0.75 / 1024);
+      showToast('📷 อัปโหลดรูปแล้ว (~' + kb + ' KB)');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function clearUploadedImage() {
+  document.getElementById('f-img').value = '';
+  document.getElementById('f-img-file').value = '';
+  document.getElementById('img-preview-wrap').style.display = 'none';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────
+initCats();
+initSizes();
+filterProducts();
+</script>
+</body>
+</html>
