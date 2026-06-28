@@ -53,7 +53,7 @@
   .card-id { font-size: 10px; color: #ccc; margin-top: 4px; }
   .no-results, .loading { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--muted); }
   
-  /* MODAL */
+  /* MODAL (หน้าต่างรายละเอียดสินค้าตอนคลิกรูป) */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; backdrop-filter: blur(2px); align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border-radius: 14px; max-width: 520px; width: 100%; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
@@ -68,12 +68,12 @@
   .spec-item { background: var(--bg); border-radius: 8px; padding: 12px; text-align: center; }
   .spec-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
   .spec-val { font-size: 16px; font-weight: 600; }
-  .modal-price-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 16px; }
+  .modal-price-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 20px; }
   .modal-price { font-size: 24px; font-weight: 600; }
   .modal-price.no-price { font-size: 14px; color: var(--muted); }
   .modal-code { font-size: 11px; color: var(--muted); margin-top: 4px; }
   
-  /* IG BUTTON */
+  /* ปุ่มลิงก์ไอจีในหน้าต่างรายละเอียด */
   .ig-btn-wrap { display: none; }
   .ig-btn-wrap.visible { display: block; }
   .ig-go-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: var(--ig-color); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; text-align: center; transition: opacity 0.2s; box-shadow: 0 4px 12px rgba(225, 48, 108, 0.2); }
@@ -122,26 +122,29 @@
     <div class="modal-img" id="modal-img">
       <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">×</button>
       <div class="modal-img-placeholder" id="modal-placeholder">
-        <span>คลิกปุ่มด้านล่างเพื่อดูรายละเอียดใน Instagram</span>
+        <span>คลิกปุ่มด้านล่างเพื่อดูรายละเอียดเพิ่มเติมบน Instagram</span>
       </div>
     </div>
     <div class="modal-body">
       <div class="modal-cat" id="modal-cat"></div>
       <div class="modal-name" id="modal-name"></div>
+      
       <div class="modal-specs">
         <div class="spec-item"><div class="spec-label">ไซซ์</div><div class="spec-val" id="m-size">—</div></div>
         <div class="spec-item"><div class="spec-label">อก</div><div class="spec-val" id="m-chest">—</div></div>
         <div class="spec-item"><div class="spec-label">ยาว</div><div class="spec-val" id="m-length">—</div></div>
       </div>
+      
       <div class="modal-price-row">
         <div>
           <div class="modal-price" id="m-price"></div>
           <div class="modal-code" id="m-code"></div>
         </div>
       </div>
+      
       <div class="ig-btn-wrap" id="ig-btn-container">
         <a id="modal-ig-link" class="ig-go-btn" href="#" target="_blank">
-          📸 ดูรายละเอียดเพิ่มเติมบน Instagram ↗
+          📸 ดูเพิ่มเติมในไอจี ↗
         </a>
       </div>
     </div>
@@ -149,13 +152,14 @@
 </div>
 
 <script>
-// แก้ไขระบบดึงข้อมูลให้ดึงคอลัมน์ J (ig) ได้ 100%
+// แก้ไขรูปแบบการลิงก์ให้ดึงข้อมูลคอลัมน์ J (ig) ได้สมบูรณ์แบบ
 const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/117p7w38cFd6UKuZ_JYreRsI6oUFl4XjlO_OezCzMZ5c/export?format=csv&id=117p7w38cFd6UKuZ_JYreRsI6oUFl4XjlO_OezCzMZ5c";
 
 let products = [];
 let selectedCat = 'ทั้งหมด';
 let selectedSize = '';
 
+// รายการหมวดหมู่ปุ่มกดหน้าร้าน
 const CATS = ['ทั้งหมด','มิกกี้และเพื่อนๆ','ซานริโอ/แครแบร','สัตวในดิสนีย','เจาหญิง','สตอเบอรรี่','ไนทแมร/ผีนอย/เจาสาว','อื่นๆ'];
 const CAT_LABELS = {
   'ทั้งหมด':'ทั้งหมด', 'มิกกี้และเพื่อนๆ':'🐭 มิกกี้และเพื่อนๆ', 'ซานริโอ/แครแบร':'🎀 ซานริโอ',
@@ -171,7 +175,7 @@ async function loadProductsFromSheet() {
     products = parseCSV(data);
     filterProducts();
   } catch (error) {
-    document.getElementById('product-grid').innerHTML = '<div class="no-results">เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณาตรวจสอบว่าใน Google Sheets กด "เผยแพร่ไปยังเว็บ" หรือยังครับ</div>';
+    document.getElementById('product-grid').innerHTML = '<div class="no-results">ระบบกำลังโหลดข้อมูล กรุณาตรวจสอบว่า Google Sheets ตั้งค่าเผยแพร่ไปยังเว็บแล้วหรือยังนะครับ</div>';
   }
 }
 
@@ -179,14 +183,12 @@ function parseCSV(text) {
   const lines = text.split('\n');
   if (lines.length <= 1) return [];
   
-  // ตัดช่องว่างและแปลงหัวข้อเป็นตัวพิมพ์เล็ก
   const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, '').toLowerCase());
   const list = [];
   
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue;
     
-    // แยกคอมมาในข้อความอย่างถูกต้อง
     const currentLine = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.trim().replace(/"/g, ''));
     const obj = {};
     
@@ -198,7 +200,6 @@ function parseCSV(text) {
     
     if (!obj.name && !obj.cat) continue;
     
-    // ป้องกันคำสะกดผิดกรณีพิมพ์เล็งท์ผิดตัวอักษร
     const itemLength = obj.length || obj.lengt || '—';
     
     list.push({
@@ -211,7 +212,7 @@ function parseCSV(text) {
       code: obj.code || '',
       img: obj.img || '',
       price: obj.price || null,
-      ig: obj.ig || '' // ดึงลิงก์ไอจีช่อง J มาใส่ตรงนี้
+      ig: obj.ig || '' // ดึงค่าจากคอลัมน์ J (ช่อง ig) ของกูเกิลชีต
     });
   }
   return list;
@@ -335,7 +336,7 @@ function openModal(p) {
     placeholder.style.display = 'flex';
   }
 
-  // ส่วนตรวจสอบว่าถ้าใส่ลิงก์ในช่องไอจี (ช่อง J) ให้โชว์ปุ่มสีชมพูทันที
+  // ตัวเช็กและเปิดปุ่ม "ดูเพิ่มเติมในไอจี"
   if (p.ig && p.ig.trim().startsWith('http')) {
     igBtnWrap.classList.add('visible');
     igLink.href = p.ig.trim();
