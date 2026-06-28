@@ -11,6 +11,7 @@
     --bg: #fafaf8; --surface: #ffffff; --border: #e8e6e1; --text: #1a1a18;
     --muted: #8a887f; --accent: #c8a97e; --accent-soft: #f5efe6; --tag-bg: #f0ede8;
     --danger: #c0392b; --success: #2d7a4f; --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+    --ig-color: #e1306c;
   }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.5; }
   .site-header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
@@ -59,8 +60,7 @@
   .modal-img { width: 100%; aspect-ratio: 1; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
   .modal-img img { width: 100%; height: 100%; object-fit: cover; }
   .modal-img-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--muted); }
-  .modal-img-placeholder a { font-size: 13px; color: var(--accent); text-decoration: none; border: 1px solid var(--accent); padding: 8px 20px; border-radius: 6px; }
-  .modal-close { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.9); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+  .modal-close { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.9); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; z-index: 10; }
   .modal-body { padding: 24px; }
   .modal-cat { font-size: 11px; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
   .modal-name { font-size: 20px; font-family: 'Playfair Display', serif; margin-bottom: 14px; }
@@ -68,12 +68,17 @@
   .spec-item { background: var(--bg); border-radius: 8px; padding: 12px; text-align: center; }
   .spec-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
   .spec-val { font-size: 16px; font-weight: 600; }
-  .modal-price-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 16px; }
+  .modal-price-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 16px; }
   .modal-price { font-size: 24px; font-weight: 600; }
   .modal-price.no-price { font-size: 14px; color: var(--muted); }
-  .modal-link { font-size: 13px; color: var(--accent); text-decoration: none; }
-  .modal-code { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .modal-code { font-size: 11px; color: var(--muted); margin-top: 4px; }
   
+  /* IG BUTTON */
+  .ig-btn-wrap { display: none; }
+  .ig-btn-wrap.visible { display: block; }
+  .ig-go-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: var(--ig-color); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; text-align: center; transition: opacity 0.2s; box-shadow: 0 4px 12px rgba(225, 48, 108, 0.2); }
+  .ig-go-btn:hover { opacity: 0.9; }
+
   @media (max-width: 600px) {
     .header-inner { height: auto; padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
     .search-wrap { order: 2; max-width: 100%; width: 100%; }
@@ -112,14 +117,12 @@
   </div>
 </div>
 
-<!-- PRODUCT MODAL -->
 <div class="modal-overlay" id="modal" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-img" id="modal-img">
       <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">×</button>
       <div class="modal-img-placeholder" id="modal-placeholder">
-        <span>ยังไม่มีรูปภาพ</span>
-        <a id="modal-ig-link" href="#" target="_blank" style="display:none">ดูรูปใน Instagram ↗</a>
+        <span>คลิกปุ่มด้านล่างเพื่อดูรายละเอียดใน Instagram</span>
       </div>
     </div>
     <div class="modal-body">
@@ -135,15 +138,19 @@
           <div class="modal-price" id="m-price"></div>
           <div class="modal-code" id="m-code"></div>
         </div>
-        <a id="m-link" class="modal-link" href="#" target="_blank" style="display:none">ดูรูป ↗</a>
+      </div>
+      <div class="ig-btn-wrap" id="ig-btn-container">
+        <a id="modal-ig-link" class="ig-go-btn" href="#" target="_blank">
+          📸 ดูรายละเอียดเพิ่มเติมบน Instagram ↗
+        </a>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// เชื่อมต่อ Google Sheets เรียบร้อยแล้วครับ
-const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/117p7w38cFd6UKuZ_JYreRsI6oUFl4XjlO_OezCzMZ5c/gviz/tq?tqx=out:csv";
+// แก้ไขระบบดึงข้อมูลให้ดึงคอลัมน์ J (ig) ได้ 100%
+const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/117p7w38cFd6UKuZ_JYreRsI6oUFl4XjlO_OezCzMZ5c/export?format=csv&id=117p7w38cFd6UKuZ_JYreRsI6oUFl4XjlO_OezCzMZ5c";
 
 let products = [];
 let selectedCat = 'ทั้งหมด';
@@ -156,7 +163,6 @@ const CAT_LABELS = {
   'ไนทแมร/ผีนอย/เจาสาว':'🎃 ไนท์แมร์', 'อื่นๆ':'✨ อื่นๆ'
 };
 
-// ดึงข้อมูลจาก Google Sheets
 async function loadProductsFromSheet() {
   try {
     const response = await fetch(GOOGLE_SHEET_CSV_URL);
@@ -165,41 +171,48 @@ async function loadProductsFromSheet() {
     products = parseCSV(data);
     filterProducts();
   } catch (error) {
-    document.getElementById('product-grid').innerHTML = '<div class="no-results">กำลังรอการตั้งค่า "เผยแพร่ไปยังเว็บ" จาก Google Sheets...<br><br><small style="color:#aaa;">*อย่าลืมทำตามขั้นตอนเปิดสาธารณะใน Google Sheets นะครับ*</small></div>';
+    document.getElementById('product-grid').innerHTML = '<div class="no-results">เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณาตรวจสอบว่าใน Google Sheets กด "เผยแพร่ไปยังเว็บ" หรือยังครับ</div>';
   }
 }
 
-// แปลงไฟล์ CSV เป็นข้อมูลในเว็บ
 function parseCSV(text) {
   const lines = text.split('\n');
   if (lines.length <= 1) return [];
   
+  // ตัดช่องว่างและแปลงหัวข้อเป็นตัวพิมพ์เล็ก
   const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, '').toLowerCase());
   const list = [];
   
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue;
-    const currentLine = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^ My"]*$)/).map(c => c.trim().replace(/"/g, ''));
     
+    // แยกคอมมาในข้อความอย่างถูกต้อง
+    const currentLine = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.trim().replace(/"/g, ''));
     const obj = {};
+    
     headers.forEach((header, index) => {
       if (currentLine[index] !== undefined) {
         obj[header] = currentLine[index];
       }
     });
     
-    if (!obj.name && !obj.cat) continue; // ข้ามแถวที่ว่างเปล่าจริงๆ
+    if (!obj.name && !obj.cat) continue;
     
-    // ตั้งค่าตัวแปรเริ่มต้นถ้าว่าง
-    obj.price = obj.price || null;
-    obj.chest = obj.chest || '—';
-    obj.length = obj.length || '—';
-    obj.size = obj.size || '—';
-    obj.code = obj.code || '';
-    obj.img = obj.img || '';
-    obj.cat = obj.cat || 'อื่นๆ';
+    // ป้องกันคำสะกดผิดกรณีพิมพ์เล็งท์ผิดตัวอักษร
+    const itemLength = obj.length || obj.lengt || '—';
     
-    list.push(obj);
+    list.push({
+      id: obj.id || '',
+      cat: obj.cat || 'อื่นๆ',
+      name: obj.name || 'ไม่มีชื่อสินค้า',
+      size: obj.size || '—',
+      chest: obj.chest || '—',
+      length: itemLength,
+      code: obj.code || '',
+      img: obj.img || '',
+      price: obj.price || null,
+      ig: obj.ig || '' // ดึงลิงก์ไอจีช่อง J มาใส่ตรงนี้
+    });
   }
   return list;
 }
@@ -246,7 +259,6 @@ function clearSize() {
 function filterProducts() {
   const q = document.getElementById('search-input').value.toLowerCase().trim();
   const filtered = products.filter(p => {
-    // ซ่อนสินค้าอัตโนมัติถ้าพิมพ์ว่า ขายแล้ว
     if (String(p.price).includes('ขายแล้ว') || String(p.name).includes('ขายแล้ว')) return false;
     if (selectedCat !== 'ทั้งหมด' && p.cat !== selectedCat) return false;
     if (selectedSize && p.size !== selectedSize) return false;
@@ -278,7 +290,7 @@ function renderGrid(list) {
       <div class="card-img">
         ${hasImg
           ? `<img src="${p.img}" alt="${p.name}">`
-          : `<div class="card-img-placeholder"><span>คลิกดูรูปภาพ</span></div>`
+          : `<div class="card-img-placeholder"><span>คลิกดูรายละเอียด</span></div>`
         }
         <span class="card-size-tag">${p.size}</span>
       </div>
@@ -299,8 +311,8 @@ function openModal(p) {
   document.getElementById('modal-cat').textContent = CAT_LABELS[p.cat] || p.cat;
   document.getElementById('modal-name').textContent = p.name;
   document.getElementById('m-size').textContent = p.size;
-  document.getElementById('m-chest').textContent = p.chest + (p.chest !== '—' ? '"' : '');
-  document.getElementById('m-length').textContent = p.length + (p.length !== '—' ? '"' : '');
+  document.getElementById('m-chest').textContent = p.chest + (p.chest !== '—' && !p.chest.includes('"') ? '"' : '');
+  document.getElementById('m-length').textContent = p.length + (p.length !== '—' && !p.length.includes('"') ? '"' : '');
   
   const isNumericPrice = p.price && !isNaN(p.price);
   document.getElementById('m-price').textContent = isNumericPrice ? '฿' + p.price : (p.price || 'สอบถามราคา');
@@ -308,8 +320,8 @@ function openModal(p) {
 
   const imgEl = document.getElementById('modal-img');
   const placeholder = document.getElementById('modal-placeholder');
+  const igBtnWrap = document.getElementById('ig-btn-container');
   const igLink = document.getElementById('modal-ig-link');
-  const mLink = document.getElementById('m-link');
 
   const oldImg = imgEl.querySelector('img');
   if (oldImg) oldImg.remove();
@@ -319,13 +331,18 @@ function openModal(p) {
     const img = document.createElement('img');
     img.src = p.img;
     imgEl.insertBefore(img, imgEl.firstChild);
-    mLink.style.display = 'flex'; mLink.href = p.img;
-    igLink.style.display = 'none';
   } else {
     placeholder.style.display = 'flex';
-    igLink.style.display = 'none';
-    mLink.style.display = 'none';
   }
+
+  // ส่วนตรวจสอบว่าถ้าใส่ลิงก์ในช่องไอจี (ช่อง J) ให้โชว์ปุ่มสีชมพูทันที
+  if (p.ig && p.ig.trim().startsWith('http')) {
+    igBtnWrap.classList.add('visible');
+    igLink.href = p.ig.trim();
+  } else {
+    igBtnWrap.classList.remove('visible');
+  }
+
   document.getElementById('modal').classList.add('open');
 }
 
